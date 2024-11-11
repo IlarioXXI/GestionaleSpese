@@ -1,9 +1,12 @@
 package com.apuliadigitalmaker.gestionalespese.category;
 
+import com.apuliadigitalmaker.gestionalespese.expense.Expense;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "categories",schema = "gestionale_spese")
@@ -30,6 +33,9 @@ public class Category {
 
     @Column(name = "deleted")
     private Instant deleted;
+
+    @OneToMany(mappedBy = "category")
+    private List<Expense> expenses = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

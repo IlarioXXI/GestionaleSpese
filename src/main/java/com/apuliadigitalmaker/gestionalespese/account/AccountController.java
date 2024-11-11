@@ -83,4 +83,18 @@ public class AccountController {
             return ResponseBuilder.error();
         }
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchAccount(@RequestParam String query){
+        if (query.length() < 3) {
+            return ResponseBuilder.badRequest("Required at least 3 characters");
+        }
+
+        List<Account> accounts =accountService.searchAccount(query);
+        if (accounts.isEmpty()) {
+            return ResponseBuilder.notFound("Search has no results");
+        }
+
+        return ResponseBuilder.searchResults(accounts, accounts.size());
+    }
 }

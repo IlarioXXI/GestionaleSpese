@@ -1,6 +1,7 @@
 package com.apuliadigitalmaker.gestionalespese.earning;
 
 import com.apuliadigitalmaker.gestionalespese.account.Account;
+import com.apuliadigitalmaker.gestionalespese.category.Category;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 import java.time.Instant;
@@ -17,12 +18,13 @@ public class Earning {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id",nullable = false)
-    private Account accountId;
+    private Account account;
 
 
-
-    @Column(name = "category_id", nullable = false)
-    private Integer categoryId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id",nullable = false)
+    private Category category;
+    
 
     @Column(name = "amount", nullable = false)
     private Double amount;

@@ -32,7 +32,7 @@ public class AccountService {
 
     @Transactional
     public Account updateAccount(Integer id, Map<String, Object> update){
-        Optional<Account> optionalAccount = accountRepository.findAccountByIdNotEmpty(id);
+        Optional<Account> optionalAccount = accountRepository.findAccountById(id);
         if (optionalAccount.isEmpty()){
             throw new EntityNotFoundException(notFoundMessage);
         }
@@ -52,9 +52,13 @@ public class AccountService {
 
     @Transactional
     public Account deleteAccount(Integer id) {
-        Account account = accountRepository.findAccountByIdNotEmpty(id)
+        Account account = accountRepository.findAccountById(id)
                 .orElseThrow(()-> new EntityNotFoundException(notFoundMessage));
         account.softDelete();
         return accountRepository.save(account);
+    }
+
+    public List<Account> searchAccount(String query) {
+        return accountRepository.findByAccountNameStartingWithIgnoreCaseAndDeletedIsNull(query);
     }
 }

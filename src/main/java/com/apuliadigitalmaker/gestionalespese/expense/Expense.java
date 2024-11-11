@@ -17,11 +17,11 @@ public class Expense {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id",nullable = false)
-    private Account accountId;
+    private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id",nullable = false)
-    private Category categoryId;
+    private Category category;
 
     @Column(name= "amount", nullable = false)
     private Double amount;

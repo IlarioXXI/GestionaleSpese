@@ -52,7 +52,7 @@ public class User {
     @Column(name = "deleted")
     private Instant deleted;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "user")
     private List<Account> account = new ArrayList<>();
 
     @PrePersist

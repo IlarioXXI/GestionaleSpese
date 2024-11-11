@@ -1,5 +1,6 @@
 package com.apuliadigitalmaker.gestionalespese.account;
 
+import com.apuliadigitalmaker.gestionalespese.earning.Earning;
 import com.apuliadigitalmaker.gestionalespese.expense.Expense;
 import com.apuliadigitalmaker.gestionalespese.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -50,6 +51,10 @@ public class Account {
 
     @OneToMany(mappedBy = "account")
     private List<Expense> expenses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account")
+    private List<Earning> earnings = new ArrayList<>();
+    
 
     @PrePersist
     protected void onCreate() {
