@@ -1,5 +1,6 @@
 package com.apuliadigitalmaker.gestionalespese.user;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +10,7 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private static final String notFoundMessage = "User not found";
+    private static final String userRegistered = "User registered";
 
     @Autowired
     private UserRepository userRepository;
@@ -22,11 +23,12 @@ public class UserService {
        return userRepository.findByUsername(username);
     }
 
-    public User saveUser(UserRequestDTO userRequestDTO) {
-
-        User newUser = new User();
-        newUser.setUsername(userRequestDTO.getUsername());
-        newUser.setPassword(userRequestDTO.getPassword());
-        return userRepository.save(newUser);
+    public User saveUser(User user) throws BadRequestException {
+        for(User u : userRepository.findAll()) {
+            if(u.getUsername().equals(user.getUsername())) {
+                throw new BadRequestException(userRegistered);
+            }
+        }
+        return userRepository.save(user);
     }
 }

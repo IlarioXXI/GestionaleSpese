@@ -4,7 +4,7 @@ public class UserRequestDTO {
 
     private String username;
     private String password;
-    private Integer employeeId;
+    private Integer userId;
 
     public String getUsername() {
         return username;
@@ -23,10 +23,10 @@ public class UserRequestDTO {
     }
 
     public Integer getEmployeeId() {
-        return employeeId;
+        return userId;
     }
 
     public void setEmployeeId(Integer employeeId) {
-        this.employeeId = employeeId;
+        this.userId = employeeId;
     }
 }

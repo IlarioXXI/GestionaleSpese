@@ -1,6 +1,7 @@
 package com.apuliadigitalmaker.gestionalespese.user;
 
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ public class UserController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllUsers() {
+        System.out.println("Metodo getAllUsers invocato");
         try {
             List<User> users = userService.findAll();
 
@@ -31,11 +33,11 @@ public class UserController {
         }
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addUser(@RequestBody UserRequestDTO userRequestDTO) {
+    @PostMapping("/register")
+    public ResponseEntity<?> addUser(@RequestBody User user) {
         try {
-            User user = userService.saveUser(userRequestDTO);
-            return ResponseBuilder.success(user);
+            User newUser = userService.saveUser(user);
+            return ResponseBuilder.success(newUser);
         }
         catch (Exception e) {
             e.printStackTrace();
