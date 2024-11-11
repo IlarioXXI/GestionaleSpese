@@ -1,11 +1,15 @@
 package com.apuliadigitalmaker.gestionalespese.user;
 
+import com.apuliadigitalmaker.gestionalespese.account.Account;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users",schema = "gestionale_spese")
@@ -34,16 +38,22 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    @JsonIgnore
     @ColumnDefault("current_timestamp()")
     @Column(name = "created")
     private Instant created;
 
+    @JsonIgnore
     @ColumnDefault("current_timestamp()")
     @Column(name = "updated")
     private Instant updated;
 
+    @JsonIgnore
     @Column(name = "deleted")
     private Instant deleted;
+
+    @OneToMany(mappedBy = "account")
+    private List<Account> account = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
