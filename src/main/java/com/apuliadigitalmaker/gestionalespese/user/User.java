@@ -28,7 +28,7 @@ public class User {
     @Column(name = "email",nullable = false)
     private String email;
 
-    @ColumnDefault("0")
+    @ColumnDefault("1")
     @Column(name = "is_active")
     private Byte isActive;
 
@@ -58,7 +58,7 @@ public class User {
     @PrePersist
     protected void onCreate() {
         created = Instant.now();
-        isActive = 0;
+        isActive = 1;
     }
 
     @PreUpdate
@@ -77,6 +77,7 @@ public class User {
 
     public void softDelete() {
         this.deleted = Instant.now();
+        this.isActive = 0;
     }
 
     public String getUsername() {

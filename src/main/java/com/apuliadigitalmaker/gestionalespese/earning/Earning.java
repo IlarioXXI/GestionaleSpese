@@ -26,7 +26,9 @@ public class Earning {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id",nullable = false)
     private Category category;
-    
+
+    @Column(name = "earning_name",nullable = false)
+    private String earningName;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
@@ -107,5 +109,13 @@ public class Earning {
 
     public void setDeleted(Instant deleted) {
         this.deleted = deleted;
+    }
+
+    public String getEarningName() {
+        return earningName;
+    }
+
+    public void setEarningName(String earningName) {
+        this.earningName = earningName;
     }
 }

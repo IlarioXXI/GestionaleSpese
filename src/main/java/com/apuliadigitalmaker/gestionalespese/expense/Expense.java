@@ -104,4 +104,12 @@ public class Expense {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public String getExpenseName() {
+        return expenseName;
+    }
+
+    public void setExpenseName(String expenseName) {
+        this.expenseName = expenseName;
+    }
 }

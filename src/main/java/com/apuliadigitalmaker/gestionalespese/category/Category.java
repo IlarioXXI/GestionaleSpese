@@ -1,6 +1,7 @@
 package com.apuliadigitalmaker.gestionalespese.category;
 
 import com.apuliadigitalmaker.gestionalespese.expense.Expense;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -23,14 +24,17 @@ public class Category {
     @Column(name = "expense_earning", nullable = false)
     private Byte expenseEarning;
 
+    @JsonIgnore
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created", nullable = false)
+    @Column(name = "created")
     private Instant created;
 
+    @JsonIgnore
     @ColumnDefault("current_timestamp()")
     @Column(name = "updated")
     private Instant updated;
 
+    @JsonIgnore
     @Column(name = "deleted")
     private Instant deleted;
 

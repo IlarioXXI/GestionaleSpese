@@ -20,11 +20,11 @@ public class CategoryService {
 
 
     public List<Category> findAllCategories() {
-        return categoryRepository.findAll();
+        return categoryRepository.findAllByDeletedIsNull();
     }
 
     public Optional<Category> findById(Integer id) {
-        return categoryRepository.findById(id);
+        return categoryRepository.findCategoryByIdAndDeletedIsNull(id);
     }
 
     public Category saveCategory(Category category) {
