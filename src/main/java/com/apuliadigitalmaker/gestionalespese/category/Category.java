@@ -47,6 +47,7 @@ public class Category {
         updated = Instant.now();
     }
 
+
     public void softDelete() {
         this.deleted = Instant.now();
     }

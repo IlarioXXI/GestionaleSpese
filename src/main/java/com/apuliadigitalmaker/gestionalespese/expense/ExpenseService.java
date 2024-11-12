@@ -1,5 +1,7 @@
 package com.apuliadigitalmaker.gestionalespese.expense;
 
+import com.apuliadigitalmaker.gestionalespese.account.AccountRepository;
+import com.apuliadigitalmaker.gestionalespese.earning.Earning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,9 @@ public class ExpenseService {
     @Autowired
     private ExpenseRepository expenseRepository;
 
+    @Autowired
+    private AccountRepository accountRepository;
+
     public List<Expense> findAllExpenses() {
         return expenseRepository.findAll();
     }
@@ -21,6 +26,13 @@ public class ExpenseService {
     }
 
     public Expense saveExpense(Expense expense){
-        return expenseRepository.save(expense);
+        Long amount = expense.getAmount().longValue();
+        if (amount <= 0){
+            throw new IllegalArgumentException("Amount must be greater than 0");
+        }else{
+            expense.getAccount().getActualBalance().subtract(expense.getAmount());
+            accountRepository.save(expense.getAccount());
+            return expenseRepository.save(expense);
+        }
     }
 }

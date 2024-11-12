@@ -4,6 +4,8 @@ import com.apuliadigitalmaker.gestionalespese.account.Account;
 import com.apuliadigitalmaker.gestionalespese.category.Category;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.math.BigDecimal;
 import java.time.Instant;
 
 
@@ -27,7 +29,7 @@ public class Earning {
     
 
     @Column(name = "amount", nullable = false)
-    private Double amount;
+    private BigDecimal amount;
 
     @Column(name = "earning_date", nullable = false)
     private Instant earningDate;
@@ -43,4 +45,67 @@ public class Earning {
     @Column(name = "deleted")
     private Instant deleted;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Instant getEarningDate() {
+        return earningDate;
+    }
+
+    public void setEarningDate(Instant earningDate) {
+        this.earningDate = earningDate;
+    }
+
+    public Instant getCreated() {
+        return created;
+    }
+
+    public void setCreated(Instant created) {
+        this.created = created;
+    }
+
+    public Instant getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Instant updated) {
+        this.updated = updated;
+    }
+
+    public Instant getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Instant deleted) {
+        this.deleted = deleted;
+    }
 }

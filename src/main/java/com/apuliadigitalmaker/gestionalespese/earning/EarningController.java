@@ -37,6 +37,4 @@ public class EarningController {
             return ResponseBuilder.error();
         }
     }
-
-
 }

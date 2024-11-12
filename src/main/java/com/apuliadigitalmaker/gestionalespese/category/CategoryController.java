@@ -1,7 +1,9 @@
 package com.apuliadigitalmaker.gestionalespese.category;
 
+import com.apuliadigitalmaker.gestionalespese.account.Account;
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
 import com.apuliadigitalmaker.gestionalespese.expense.Expense;
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,8 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllCategories() {
@@ -54,7 +58,43 @@ public class CategoryController {
         }
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id) {
+        try{
+            categoryService.deleteCategory(id);
+            return ResponseBuilder.deleted("Category deleted successfully");
+        }catch (EntityNotFoundException e){
+            return ResponseBuilder.notFound(e.getMessage());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return ResponseBuilder.error();
+        }
+    }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchCategory(@RequestParam String query){
+        if (query.length() < 3) {
+            return ResponseBuilder.badRequest("Required at least 3 characters");
+        }
 
+        List<Category> categories =categoryService.searchCategory(query);
+        if (categories.isEmpty()) {
+            return ResponseBuilder.notFound("Search has no results");
+        }
 
+        return ResponseBuilder.searchResults(categories, categories.size());
+    }
+
+    @GetMapping("/search/expenseorearning/{id}")
+    public ResponseEntity<?> searchExpenseOrEarningByCategory(@PathVariable Integer id){
+        try{
+            return  ResponseBuilder.success(categoryService.searchExpenseOrEarningByCategory(id));
+        }catch (EntityNotFoundException e){
+            return ResponseBuilder.notFound(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseBuilder.error();
+        }
+    }
 }
