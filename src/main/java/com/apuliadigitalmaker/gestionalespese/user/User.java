@@ -75,6 +75,10 @@ public class User {
         this.password = passwordEncoder.encode(password);
     }
 
+    public void softDelete() {
+        this.deleted = Instant.now();
+    }
+
     public String getUsername() {
         return username;
     }

@@ -10,7 +10,6 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account getAccountsById(Integer id);
     Optional<Account> findAccountById(Integer id);
-    Optional<Account> deleteAccountById(Integer id);
     List<Account> findByAccountNameStartingWithIgnoreCaseAndDeletedIsNull(String query);
 
 }

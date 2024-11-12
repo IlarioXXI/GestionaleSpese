@@ -61,4 +61,5 @@ public class AccountService {
     public List<Account> searchAccount(String query) {
         return accountRepository.findByAccountNameStartingWithIgnoreCaseAndDeletedIsNull(query);
     }
+
 }

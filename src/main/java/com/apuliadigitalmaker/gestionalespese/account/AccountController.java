@@ -56,7 +56,7 @@ public class AccountController {
         }
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateAccount(@PathVariable Integer id,@RequestBody Map<String, Object> update){
         try{
             return ResponseBuilder.success(accountService.updateAccount(id,update));
@@ -70,7 +70,7 @@ public class AccountController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable Integer id){
         try{
             accountService.deleteAccount(id);
