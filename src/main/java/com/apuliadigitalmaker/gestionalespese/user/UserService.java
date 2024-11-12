@@ -60,6 +60,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+
     @Transactional
     public User deleteUser(Integer id){
         User user = userRepository.findUserById(id)

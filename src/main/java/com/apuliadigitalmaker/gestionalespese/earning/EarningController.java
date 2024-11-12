@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/earning")
@@ -56,6 +57,19 @@ public class EarningController {
             }
         }
         catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBuilder.error();
+        }
+    }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<?> updateEarning(@PathVariable Integer id,@RequestBody Map<String, Object> update) {
+        try {
+            return ResponseBuilder.success(earningService.updateEarning(id,update));
+        }catch (EntityNotFoundException e){
+            return ResponseBuilder.notFound(e.getMessage());
+        }
+        catch (Exception e){
             e.printStackTrace();
             return ResponseBuilder.error();
         }

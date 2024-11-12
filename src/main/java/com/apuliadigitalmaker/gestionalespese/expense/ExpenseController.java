@@ -64,16 +64,16 @@ public class ExpenseController {
         }
     }
 
-//    @PatchMapping("/update/{id}")
-//    public ResponseEntity<?> updateexpense(@PathVariable Integer id,@RequestBody Map<String, Object> update) {
-//        try {
-//            return ResponseBuilder.success(expenseService.updateExpense(id,update));
-//        }catch (EntityNotFoundException e){
-//            return ResponseBuilder.notFound(e.getMessage());
-//        }
-//        catch (Exception e){
-//            e.printStackTrace();
-//            return ResponseBuilder.error();
-//        }
-//    }
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<?> updateExpense(@PathVariable Integer id,@RequestBody Map<String, Object> update) {
+        try {
+            return ResponseBuilder.success(expenseService.updateExpense(id,update));
+        }catch (EntityNotFoundException e){
+            return ResponseBuilder.notFound(e.getMessage());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return ResponseBuilder.error();
+        }
+    }
 }

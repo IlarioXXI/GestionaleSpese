@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -101,6 +102,19 @@ public class CategoryController {
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
         }catch (Exception e){
+            e.printStackTrace();
+            return ResponseBuilder.error();
+        }
+    }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<?> updateCategory(@PathVariable Integer id,@RequestBody Map<String, Object> update) {
+        try {
+            return ResponseBuilder.success(categoryService.updateCategory(id,update));
+        }catch (EntityNotFoundException e){
+            return ResponseBuilder.notFound(e.getMessage());
+        }
+        catch (Exception e){
             e.printStackTrace();
             return ResponseBuilder.error();
         }
