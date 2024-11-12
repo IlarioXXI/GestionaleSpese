@@ -1,9 +1,11 @@
 package com.apuliadigitalmaker.gestionalespese.account;
 
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
+import com.apuliadigitalmaker.gestionalespese.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,9 @@ public class AccountController {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllAccounts() {
@@ -34,9 +39,19 @@ public class AccountController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addAccount(@RequestBody Account account) {
-        try{
+    public ResponseEntity<?> addAccount(@RequestBody AccountRequestDto accountRequestDto) {
+        try {
+            Account account = new Account();
+            if (userService.findUserById(accountRequestDto.getUserId()) != null) {
+                account.setUser(userService.findUserById(accountRequestDto.getUserId()));
+            } else throw new EntityNotFoundException("User not found");
+
+            account.setAccountName(accountRequestDto.getAccountName());
+            account.setInitialBalance(accountRequestDto.getInitialBalance());
+            account.setActualBalance(accountRequestDto.getInitialBalance());
             return ResponseBuilder.success(accountService.addAccount(account));
+        }catch (EntityNotFoundException e) {
+            return ResponseBuilder.error();
         }catch (Exception e){
             e.printStackTrace();
             return ResponseBuilder.error();

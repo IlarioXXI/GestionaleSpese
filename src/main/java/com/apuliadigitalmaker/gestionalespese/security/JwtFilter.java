@@ -30,8 +30,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
-
+                if (false){chain.doFilter(request, response);
+                return;}
         String path = request.getRequestURI();
 
 
@@ -41,7 +41,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/docs",
                 "/swagger-ui",
                 "/v3/api-docs",
-                "/users/all"
+                "/users/all",
+                "/error"
         );
 
         if (excludedPaths.stream().anyMatch(path::startsWith)) {

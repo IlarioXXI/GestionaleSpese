@@ -30,6 +30,7 @@ public class AccountService {
         return accountRepository.getAccountsById(id);
     }
 
+    public Account findAccountById(Integer id){return accountRepository.getAccountsById(id);}
     @Transactional
     public Account updateAccount(Integer id, Map<String, Object> update){
         Optional<Account> optionalAccount = accountRepository.findAccountById(id);
@@ -61,5 +62,7 @@ public class AccountService {
     public List<Account> searchAccount(String query) {
         return accountRepository.findByAccountNameStartingWithIgnoreCaseAndDeletedIsNull(query);
     }
+
+
 
 }

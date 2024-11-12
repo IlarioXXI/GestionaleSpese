@@ -41,10 +41,18 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Integer id) {
-        Optional<Category> category = categoryService.findById(id);
-        return category.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getCategoryById(@PathVariable Integer id) {
+        try{
+            Optional<Category> category = categoryRepository.findById(id);
+            if (category.isPresent()) {
+                return ResponseBuilder.success(category);
+            }else{
+                throw new EntityNotFoundException("Category with id " + id + " not found");
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBuilder.error();
+        }
     }
 
     @PostMapping("/add")

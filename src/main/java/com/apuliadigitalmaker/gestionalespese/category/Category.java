@@ -1,6 +1,7 @@
 package com.apuliadigitalmaker.gestionalespese.category;
 
 import com.apuliadigitalmaker.gestionalespese.expense.Expense;
+import com.apuliadigitalmaker.gestionalespese.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -40,6 +41,10 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Expense> expenses = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @JoinColumn(name = "user_id",nullable = false)
+    private User user;
 
     @PrePersist
     protected void onCreate() {

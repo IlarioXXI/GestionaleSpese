@@ -1,6 +1,7 @@
 package com.apuliadigitalmaker.gestionalespese.user;
 
 import com.apuliadigitalmaker.gestionalespese.account.Account;
+import com.apuliadigitalmaker.gestionalespese.category.Category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -51,6 +52,9 @@ public class User {
     @JsonIgnore
     @Column(name = "deleted")
     private Instant deleted;
+
+    @OneToMany(mappedBy = "user")
+    private List<Category> categories;
 
     @OneToMany(mappedBy = "user")
     private List<Account> account = new ArrayList<>();

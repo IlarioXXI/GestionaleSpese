@@ -23,8 +23,9 @@ public class CategoryService {
         return categoryRepository.findAllByDeletedIsNull();
     }
 
-    public Optional<Category> findById(Integer id) {
-        return categoryRepository.findCategoryByIdAndDeletedIsNull(id);
+    public Category findById(Integer id) {
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new EntityNotFoundException(notFoundMessage));
+        return category;
     }
 
     public Category saveCategory(Category category) {

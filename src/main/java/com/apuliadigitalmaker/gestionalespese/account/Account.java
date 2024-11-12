@@ -38,7 +38,7 @@ public class Account {
 
     @JsonIgnore
     @ColumnDefault("current_timestamp()")
-    @Column(name = "updated",nullable = false)
+    @Column(name = "updated")
     private Instant updated;
 
     @JsonIgnore
@@ -48,6 +48,30 @@ public class Account {
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
+
+    public List<Earning> getEarnings() {
+        return earnings;
+    }
+
+    public void setEarnings(List<Earning> earnings) {
+        this.earnings = earnings;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<Expense> expenses) {
+        this.expenses = expenses;
+    }
 
     @OneToMany(mappedBy = "account")
     private List<Expense> expenses = new ArrayList<>();

@@ -1,13 +1,11 @@
 package com.apuliadigitalmaker.gestionalespese.user;
 
-import com.apuliadigitalmaker.gestionalespese.account.Account;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -68,5 +66,10 @@ public class UserService {
                 .orElseThrow(()-> new EntityNotFoundException(notFoundMessage));
         user.softDelete();
         return userRepository.save(user);
+    }
+
+    public User findUserById(Integer id){
+        return userRepository.findUserById(id)
+                .orElseThrow(()-> new EntityNotFoundException(notFoundMessage));
     }
 }
