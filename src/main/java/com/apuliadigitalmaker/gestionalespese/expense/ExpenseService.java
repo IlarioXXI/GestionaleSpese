@@ -35,4 +35,8 @@ public class ExpenseService {
             return expenseRepository.save(expense);
         }
     }
+
+    public Expense updateExpense(Expense expense) {
+
+    }
 }

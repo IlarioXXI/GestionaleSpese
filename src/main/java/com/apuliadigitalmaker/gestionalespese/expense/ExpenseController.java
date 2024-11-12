@@ -5,11 +5,13 @@ import com.apuliadigitalmaker.gestionalespese.category.CategoryService;
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
 import com.apuliadigitalmaker.gestionalespese.earning.Earning;
 import com.apuliadigitalmaker.gestionalespese.earning.EarningRequestDTO;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/expense")
@@ -57,6 +59,19 @@ public class ExpenseController {
             }
         }
         catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBuilder.error();
+        }
+    }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<?> updateexpense(@PathVariable Integer id,@RequestBody Map<String, Object> update) {
+        try {
+            return ResponseBuilder.success(expenseService.updateExpense(id,update));
+        }catch (EntityNotFoundException e){
+            return ResponseBuilder.notFound(e.getMessage());
+        }
+        catch (Exception e){
             e.printStackTrace();
             return ResponseBuilder.error();
         }
