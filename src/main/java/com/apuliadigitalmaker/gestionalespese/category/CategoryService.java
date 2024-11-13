@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,12 +24,20 @@ public class CategoryService {
 
 
     public List<Category> findAllCategories() {
-        return categoryRepository.findAllByDeletedIsNull();
+        List<Category> categories = new ArrayList<>();
+        for (Category category : categoryRepository.findAll()) {
+            if(category.getDeleted()==null){
+                categories.add(category);
+            }
+        }
+        return categories;
     }
 
     public Category findById(Integer id) {
-        Category category = categoryRepository.findById(id).orElseThrow(()-> new EntityNotFoundException(notFoundMessage));
-        return category;
+        if (categoryRepository.findById(id).get().getDeleted()!=null) {
+            throw new EntityNotFoundException(notFoundMessage);
+        }
+        return categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(notFoundMessage));
     }
 
     public Category saveCategory(Category category) {

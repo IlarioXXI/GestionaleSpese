@@ -1,6 +1,7 @@
 package com.apuliadigitalmaker.gestionalespese.account;
 
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
+import com.apuliadigitalmaker.gestionalespese.user.UserRepository;
 import com.apuliadigitalmaker.gestionalespese.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +23,10 @@ public class AccountController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllAccounts() {
@@ -28,7 +34,23 @@ public class AccountController {
             List<Account> accounts = accountService.findAllAccounts();
 
             if (accounts.isEmpty()) {
-                return ResponseBuilder.notFound("Account not found");
+                return ResponseBuilder.notFound("No account is present, please create one first.");
+            }else {
+                return ResponseBuilder.success(accounts);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBuilder.error();
+        }
+    }
+
+    @GetMapping("/all/{id}")
+    public ResponseEntity<?> getAllAccountsById(@PathVariable Integer id) {
+        try{
+            List<Account> accounts = new ArrayList<>();
+            accounts.addAll(accountRepository.findAccountsByDeletedIsNull());
+            if (accounts.isEmpty()) {
+                return ResponseBuilder.notFound("No account is present, please create one first.");
             }else {
                 return ResponseBuilder.success(accounts);
             }
@@ -59,8 +81,9 @@ public class AccountController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAccountById(@PathVariable Integer id){
+    public ResponseEntity<?> getAccountById(@PathVariable Integer id,@RequestBody AccountRequestDto accountRequestDto) {
         try{
+            accountRepository.findAccountsByDeletedIsNullAndUserNotNullAndUser_Id(accountRequestDto.getUserId());
             if (accountService.getAccountById(id)==null){
                 return ResponseBuilder.notFound("Account non found");
             }

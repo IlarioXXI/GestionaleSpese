@@ -63,6 +63,12 @@ public class UserService {
                 case "email" :
                     user.setEmail((String) value);
                     break;
+                case "firstName":
+                    user.setFirstName((String) value);
+                    break;
+                case "lastName":
+                    user.setLastName((String) value);
+                    break;
             }
         });
         return userRepository.save(user);
@@ -75,19 +81,21 @@ public class UserService {
                 .orElseThrow(()-> new EntityNotFoundException(notFoundMessage));
         user.softDelete();
         for (Category category : user.getCategories()) {
-            category.setDeleted(Instant.now());
+            category.softDelete();
             categoryRepository.save(category);
         }
         for (Account account : user.getAccount()) {
-            account.setDeleted(Instant.now());
+            account.softDelete();
             accountRepository.save(account);
         }
         return userRepository.save(user);
     }
 
     public User findUserById(Integer id){
-        return userRepository.findUserById(id)
-                .orElseThrow(()-> new EntityNotFoundException(notFoundMessage));
+         if (userRepository.findUserById(id).get().getDeleted()!=null) {
+             throw new EntityNotFoundException(notFoundMessage);
+         }
+        return userRepository.findUserById(id).get();
     }
 
     public List<User> findAll(){

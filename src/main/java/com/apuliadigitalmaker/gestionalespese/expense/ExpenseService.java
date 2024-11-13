@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,10 +24,19 @@ public class ExpenseService {
     private AccountRepository accountRepository;
 
     public List<Expense> findAllExpenses() {
-        return expenseRepository.findAll();
+        List<Expense> expenses = new ArrayList<>();
+        for (Expense expense : expenseRepository.findAll()) {
+            if (expense.getDeleted() == null){
+                expenses.add(expense);
+            }
+        }
+        return expenses;
     }
 
     public Optional<Expense> findById(Integer id) {
+        if (expenseRepository.findById(id).get().getDeleted() != null) {
+            throw new EntityNotFoundException("Expense with id " + id + " not found");
+        }
         return expenseRepository.findById(id);
     }
 

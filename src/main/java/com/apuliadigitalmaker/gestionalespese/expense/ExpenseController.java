@@ -76,4 +76,16 @@ public class ExpenseController {
             return ResponseBuilder.error();
         }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable Integer id) {
+        try{
+            return ResponseBuilder.success(expenseService.findById(id));
+        }catch (EntityNotFoundException e){
+            return ResponseBuilder.notFound(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseBuilder.error();
+        }
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,11 +24,22 @@ public class EarningService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public List<Earning> findAllEarnings(){
-        return earningRepository.findAll();
+    public List<Earning> findAllEarnings() {
+        List<Earning> earnings = new ArrayList<>();
+        for (Earning earning : earningRepository.findAll()) {
+            if (earning.getDeleted() == null){
+                earnings.add(earning);
+            }
+        }
+        return earnings;
     }
+
     public Optional<Earning> findById(Integer id) {
-        return  earningRepository.findById(id);   }
+        if (earningRepository.findById(id).get().getDeleted() != null) {
+            throw new EntityNotFoundException("Expense with id " + id + " not found");
+        }
+        return earningRepository.findById(id);
+    }
 
     public Earning saveEarning(Earning earning){
         Long amount = earning.getAmount().longValue();

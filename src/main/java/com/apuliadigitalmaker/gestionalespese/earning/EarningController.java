@@ -74,4 +74,16 @@ public class EarningController {
             return ResponseBuilder.error();
         }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable Integer id) {
+        try{
+            return ResponseBuilder.success(earningService.findById(id));
+        }catch (EntityNotFoundException e){
+            return ResponseBuilder.notFound(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseBuilder.error();
+        }
+    }
 }
