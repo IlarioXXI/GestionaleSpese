@@ -1,5 +1,8 @@
 package com.apuliadigitalmaker.gestionalespese.account;
 
+import com.apuliadigitalmaker.gestionalespese.category.Category;
+import com.apuliadigitalmaker.gestionalespese.category.CategoryRepository;
+import com.apuliadigitalmaker.gestionalespese.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,8 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     public List<Account> findAllAccounts() {
         return accountRepository.findAll();
@@ -56,6 +61,10 @@ public class AccountService {
         Account account = accountRepository.findAccountById(id)
                 .orElseThrow(()-> new EntityNotFoundException(notFoundMessage));
         account.softDelete();
+        for (Category category :  account.getUser().getCategories()) {
+            category.softDelete();
+            categoryRepository.save(category);
+        }
         return accountRepository.save(account);
     }
 

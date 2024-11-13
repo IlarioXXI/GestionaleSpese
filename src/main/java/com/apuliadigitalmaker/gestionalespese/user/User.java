@@ -1,10 +1,13 @@
 package com.apuliadigitalmaker.gestionalespese.user;
 
 import com.apuliadigitalmaker.gestionalespese.account.Account;
+import com.apuliadigitalmaker.gestionalespese.account.AccountRepository;
 import com.apuliadigitalmaker.gestionalespese.category.Category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -56,6 +59,7 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories;
 
+    @JsonIgnoreProperties("user")
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> account = new ArrayList<>();
 
@@ -77,6 +81,22 @@ public class User {
     public void setPassword(String password) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         this.password = passwordEncoder.encode(password);
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
+    public List<Account> getAccount() {
+        return account;
+    }
+
+    public void setAccount(List<Account> account) {
+        this.account = account;
     }
 
     public void softDelete() {

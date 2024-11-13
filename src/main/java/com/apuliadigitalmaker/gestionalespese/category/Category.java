@@ -1,5 +1,6 @@
 package com.apuliadigitalmaker.gestionalespese.category;
 
+import com.apuliadigitalmaker.gestionalespese.earning.Earning;
 import com.apuliadigitalmaker.gestionalespese.expense.Expense;
 import com.apuliadigitalmaker.gestionalespese.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -42,9 +43,40 @@ public class Category {
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Expense> expenses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Earning> earnings = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public List<Earning> getEarnings() {
+        return earnings;
+    }
+
+    public void setEarnings(List<Earning> earnings) {
+        this.earnings = earnings;
+    }
+
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<Expense> expenses) {
+        this.expenses = expenses;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @PrePersist
     protected void onCreate() {

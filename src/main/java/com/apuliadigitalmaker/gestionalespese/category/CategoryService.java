@@ -2,6 +2,8 @@ package com.apuliadigitalmaker.gestionalespese.category;
 
 import com.apuliadigitalmaker.gestionalespese.account.Account;
 import com.apuliadigitalmaker.gestionalespese.earning.Earning;
+import com.apuliadigitalmaker.gestionalespese.earning.EarningRepository;
+import com.apuliadigitalmaker.gestionalespese.expense.ExpenseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class CategoryService {
 
     @Transactional
     public Category deleteCategory(Integer id) {
+        if (!categoryRepository.findById(id).get().getEarnings().isEmpty() || !categoryRepository.findById(id).get().getExpenses().isEmpty()) {
+            throw new EntityNotFoundException("Non puoi cancellare una categoria, se hai delle spese o guadagni registrati in essa");
+        }
         Category category = categoryRepository.findById(id)
                 .orElseThrow(()-> new EntityNotFoundException(notFoundMessage));
         category.softDelete();
