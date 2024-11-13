@@ -1,19 +1,14 @@
 package com.apuliadigitalmaker.gestionalespese.category;
 
-import com.apuliadigitalmaker.gestionalespese.account.Account;
 import com.apuliadigitalmaker.gestionalespese.common.JwtUtil;
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
-import com.apuliadigitalmaker.gestionalespese.expense.Expense;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/categories")
@@ -28,6 +23,8 @@ public class CategoryController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllCategories(@RequestHeader("Authorization") String basicAuthString) {
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try {
             List<Category> categories = categoryService.findAllCategories(Integer.valueOf(strings[1]));
 
@@ -46,6 +43,8 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString) {
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try{
             Category category = categoryService.findById(id,Integer.valueOf(strings[1]));
             if (category!=null) {
@@ -61,6 +60,8 @@ public class CategoryController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addCategory(@RequestBody Category category,@RequestHeader("Authorization") String basicAuthString){
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try {
             return ResponseBuilder.success(
                     categoryService.findById(category.getId(),
@@ -73,6 +74,8 @@ public class CategoryController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteCategoryById(@RequestHeader("Authorization") String basicAuthString) {
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try{
             categoryService.deleteCategory(Integer.valueOf(strings[1]));
             return ResponseBuilder.deleted("Category deleted successfully");
@@ -87,6 +90,8 @@ public class CategoryController {
 
     @GetMapping("/search")
     public ResponseEntity<?> searchCategory(@RequestParam String query,@RequestHeader("Authorization") String basicAuthString){
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         if (query.length() < 3) {
             return ResponseBuilder.badRequest("Required at least 3 characters");
         }
@@ -101,6 +106,8 @@ public class CategoryController {
 
     @GetMapping("/search/expenseorearning/{id}")
     public ResponseEntity<?> searchExpenseOrEarningByCategory(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString){
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try{
             return  ResponseBuilder.success(categoryService.searchExpenseOrEarningByCategory(id,Integer.valueOf(strings[1])));
         }catch (EntityNotFoundException e){
@@ -113,7 +120,8 @@ public class CategoryController {
 
     @PatchMapping("/update")
     public ResponseEntity<?> updateCategory(@RequestHeader("Authorization") String basicAuthString,@RequestBody Map<String, Object> update) {
-        String[] strings = jwtUtil.extractId(basicAuthString).split("::");
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try {
             return ResponseBuilder.success(categoryService.updateCategory(Integer.valueOf(strings[1]),update));
         }catch (EntityNotFoundException e){

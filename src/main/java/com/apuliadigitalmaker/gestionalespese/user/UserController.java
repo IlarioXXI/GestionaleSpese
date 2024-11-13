@@ -1,6 +1,5 @@
 package com.apuliadigitalmaker.gestionalespese.user;
 
-import com.apuliadigitalmaker.gestionalespese.account.Account;
 import com.apuliadigitalmaker.gestionalespese.common.JwtUtil;
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
 import jakarta.persistence.EntityNotFoundException;
@@ -8,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -55,7 +52,8 @@ public class UserController {
     }
     @PatchMapping("/update")
     public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String basicAuthString,@RequestBody Map<String, Object> update) {
-        String[] strings = jwtUtil.extractId(basicAuthString).split("::");
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try {
             return ResponseBuilder.success(userService.updateUser(Integer.valueOf(strings[1]),update));
         }catch (EntityNotFoundException e){
@@ -69,7 +67,8 @@ public class UserController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String basicAuthString) {
-        String[] strings = jwtUtil.extractId(basicAuthString).split("::");
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try{
             userService.deleteUser(Integer.valueOf(strings[1]));
             return ResponseBuilder.deleted("User deleted successfully");

@@ -4,8 +4,6 @@ import com.apuliadigitalmaker.gestionalespese.account.AccountService;
 import com.apuliadigitalmaker.gestionalespese.category.CategoryService;
 import com.apuliadigitalmaker.gestionalespese.common.JwtUtil;
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
-import com.apuliadigitalmaker.gestionalespese.earning.Earning;
-import com.apuliadigitalmaker.gestionalespese.earning.EarningRequestDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +28,8 @@ public class ExpenseController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllExpenses(@RequestHeader("Authorization") String basicAuthString) {
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try {
             List<Expense> expenses = new ArrayList<>();
 
@@ -51,9 +51,11 @@ public class ExpenseController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO,@RequestHeader("Authorization") String basicAuthString) {
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try {
 
-            if (accountService.getAccountById(expenseRequestDTO.getAccountId()) == null || categoryService.findById(expenseRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(strings[1])))== null) {
+            if (accountService.getAccountById(expenseRequestDTO.getAccountId()) == null || categoryService.findById(expenseRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractUsernameAndId(strings[1])))== null) {
                 return ResponseBuilder.notFound("Account or category not found");
             }else {
                 Expense expense = new Expense();
@@ -75,6 +77,8 @@ public class ExpenseController {
 
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateExpense(@PathVariable Integer id,@RequestBody Map<String, Object> update,@RequestHeader("Authorization") String basicAuthString) {
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try {
             return ResponseBuilder.success(expenseService.updateExpense(id,update,Integer.valueOf(strings[1])));
         }catch (EntityNotFoundException e){
@@ -88,7 +92,8 @@ public class ExpenseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString) {
-        String[] strings = jwtUtil.extractId(basicAuthString).split("::");
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try{
             if (!expenseService.findById(id).get().getAccount().getUser().getId().equals(Integer.valueOf(strings[1]))){
                 throw new EntityNotFoundException("User not found");

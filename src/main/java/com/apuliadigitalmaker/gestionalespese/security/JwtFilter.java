@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -28,41 +28,34 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
-                if (false){chain.doFilter(request, response);
-                return;}
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+
+
         String path = request.getRequestURI();
-
-
-        List<String> excludedPaths = List.of(
-                "/auth",
-                "/users/register",
-                "/docs",
-                "/swagger-ui",
-                "/v3/api-docs",
-                "/users/allwithoutauth",
-                "/error"
-        );
-
-        if (excludedPaths.stream().anyMatch(path::startsWith)) {
+        if ("/auth".equals(path) || "/error".equals(path)) {
             chain.doFilter(request, response);
             return;
         }
+
+
 
         String authHeader = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
 
+
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
-            username = jwtUtil.extractId(jwt);
+            username = jwtUtil.extractUsernameAndId(jwt);
+
         }
-
+        String[] strings = username.split("::");
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-            if (jwtUtil.isTokenValid(jwt, userDetails.getUsername())) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(strings[0]);
+            System.out.println(username);;
+            if (jwtUtil.isTokenValid(jwt, username)) {
+                System.out.println("is token valid");
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
@@ -71,10 +64,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
 
-        chain.doFilter(request, response);
+
+            }
+
+            chain.doFilter(request, response);
+        }
+        System.out.println("sono uscito da do filterInternal");
     }
 
 

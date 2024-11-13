@@ -30,6 +30,8 @@ public class EarningController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllEarning(@RequestHeader("Authorization") String basicAuthString) {
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try {
             List<Earning> earnings = new ArrayList<>();
             for (Earning earning : earningService.findAllEarnings()) {
@@ -50,9 +52,11 @@ public class EarningController {
     }
     @PostMapping("/add")
     public ResponseEntity<?> addEarning(@RequestBody EarningRequestDTO earningRequestDTO,@RequestHeader("Authorization") String basicAuthString) {
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try {
 
-            if (accountService.getAccountById(earningRequestDTO.getAccountId()) == null || categoryService.findById(earningRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(strings[1])))== null) {
+            if (accountService.getAccountById(earningRequestDTO.getAccountId()) == null || categoryService.findById(earningRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractUsernameAndId(strings[1])))== null) {
                 return ResponseBuilder.notFound("Account or category not found");
             }else {
                 Earning earning = new Earning();
@@ -74,6 +78,8 @@ public class EarningController {
 
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateEarning(@PathVariable Integer id,@RequestBody Map<String, Object> update,@RequestHeader("Authorization") String basicAuthString) {
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try {
             return ResponseBuilder.success(earningService.updateEarning(id,update,Integer.valueOf(strings[1])));
         }catch (EntityNotFoundException e){
@@ -87,6 +93,8 @@ public class EarningController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString) {
+        String jwtToken = basicAuthString.replace("Bearer ", "");
+        String[] strings = jwtUtil.extractUsernameAndId(jwtToken).split("::");
         try{
             if (earningService.findById(id).get().getAccount().getUser().getId().equals(Integer.valueOf(strings[1]))){
                 throw new EntityNotFoundException("User not found");

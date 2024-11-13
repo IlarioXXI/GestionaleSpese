@@ -17,25 +17,27 @@ public class JwtUtil {
     public String generateToken(String username,Integer userId) {
         long expirationTime = 3600000;
         return Jwts.builder()
-                .subject(username)
-                .setAudience(userId.toString())
+                .subject(username+"::"+userId)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
-    public String extractId(String token) {
-        return Jwts.parser()
+    public String extractUsernameAndId(String token) {
+        System.out.println(token);
+        String strinnga = Jwts.parser()
                 .setSigningKey(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .getAudience().toString();
+                .getSubject();
+        System.out.println(strinnga);
+        return strinnga;
     }
 
-    public boolean isTokenValid(String token, String userId) {
-        return (userId.equals(extractId(token)) && !isTokenExpired(token));
+    public boolean isTokenValid(String token, String usernameAndToken) {
+        return (usernameAndToken.equals(extractUsernameAndId(token)) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {
