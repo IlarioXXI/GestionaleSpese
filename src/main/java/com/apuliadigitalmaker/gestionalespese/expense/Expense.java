@@ -2,6 +2,7 @@ package com.apuliadigitalmaker.gestionalespese.expense;
 
 import com.apuliadigitalmaker.gestionalespese.account.Account;
 import com.apuliadigitalmaker.gestionalespese.category.Category;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -30,14 +31,17 @@ public class Expense {
     @Column(name= "expanse_date", nullable = false)
     private Instant expanseDate;
 
+    @JsonIgnore
     @ColumnDefault("current_timestamp()")
     @Column(name = "created", nullable = false)
     private Instant created;
 
+    @JsonIgnore
     @ColumnDefault("current_timestamp()")
     @Column(name = "updated")
     private Instant updated;
 
+    @JsonIgnore
     @Column(name = "deleted")
     private Instant deleted;
 

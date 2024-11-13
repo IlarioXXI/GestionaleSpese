@@ -53,10 +53,10 @@ public class User {
     @Column(name = "deleted")
     private Instant deleted;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> account = new ArrayList<>();
 
     @PrePersist

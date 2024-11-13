@@ -39,7 +39,7 @@ public class Category {
     @Column(name = "deleted")
     private Instant deleted;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Expense> expenses = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
