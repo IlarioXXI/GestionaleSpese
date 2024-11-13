@@ -26,7 +26,7 @@ public class UserController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllUsers() {
-        System.out.println("Metodo getAllUsers invocato");
+
         try {
             List<User> users = userService.findAll();
 
@@ -55,8 +55,9 @@ public class UserController {
     }
     @PatchMapping("/update")
     public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String basicAuthString,@RequestBody Map<String, Object> update) {
+        String[] strings = jwtUtil.extractId(basicAuthString).split("::");
         try {
-            return ResponseBuilder.success(userService.updateUser(Integer.valueOf(jwtUtil.extractId(basicAuthString)),update));
+            return ResponseBuilder.success(userService.updateUser(Integer.valueOf(strings[1]),update));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
         }
@@ -68,8 +69,9 @@ public class UserController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String basicAuthString) {
+        String[] strings = jwtUtil.extractId(basicAuthString).split("::");
         try{
-            userService.deleteUser(Integer.valueOf(jwtUtil.extractId(basicAuthString)));
+            userService.deleteUser(Integer.valueOf(strings[1]));
             return ResponseBuilder.deleted("User deleted successfully");
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());

@@ -34,7 +34,7 @@ public class ExpenseController {
             List<Expense> expenses = new ArrayList<>();
 
             for (Expense expense : expenseService.findAllExpenses()){
-                if (expense.getDeleted()!=null && expense.getAccount().getUser().getId().equals(Integer.valueOf(jwtUtil.extractId(basicAuthString)))){
+                if (expense.getDeleted()!=null && expense.getAccount().getUser().getId().equals(Integer.valueOf(strings[1]))){
                     expenses.add(expense);
                 }
             }
@@ -53,11 +53,11 @@ public class ExpenseController {
     public ResponseEntity<?> addExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO,@RequestHeader("Authorization") String basicAuthString) {
         try {
 
-            if (accountService.getAccountById(expenseRequestDTO.getAccountId()) == null || categoryService.findById(expenseRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(basicAuthString)))== null) {
+            if (accountService.getAccountById(expenseRequestDTO.getAccountId()) == null || categoryService.findById(expenseRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(strings[1])))== null) {
                 return ResponseBuilder.notFound("Account or category not found");
             }else {
                 Expense expense = new Expense();
-                expense.setCategory(categoryService.findById(expenseRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(basicAuthString))));
+                expense.setCategory(categoryService.findById(expenseRequestDTO.getCategoryId(),Integer.valueOf(strings[1])));
                 expense.setAccount(accountService.getAccountById(expenseRequestDTO.getAccountId()));
                 expense.setAmount(expenseRequestDTO.getAmount());
                 expense.setExpenseName(expenseRequestDTO.getExpenseName());
@@ -76,7 +76,7 @@ public class ExpenseController {
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateExpense(@PathVariable Integer id,@RequestBody Map<String, Object> update,@RequestHeader("Authorization") String basicAuthString) {
         try {
-            return ResponseBuilder.success(expenseService.updateExpense(id,update,Integer.valueOf(jwtUtil.extractId(basicAuthString))));
+            return ResponseBuilder.success(expenseService.updateExpense(id,update,Integer.valueOf(strings[1])));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
         }
@@ -87,8 +87,12 @@ public class ExpenseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Integer id) {
+    public ResponseEntity<?> findById(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString) {
+        String[] strings = jwtUtil.extractId(basicAuthString).split("::");
         try{
+            if (!expenseService.findById(id).get().getAccount().getUser().getId().equals(Integer.valueOf(strings[1]))){
+                throw new EntityNotFoundException("User not found");
+            }
             return ResponseBuilder.success(expenseService.findById(id));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());

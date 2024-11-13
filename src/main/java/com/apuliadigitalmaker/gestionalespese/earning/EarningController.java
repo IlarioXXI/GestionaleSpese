@@ -33,7 +33,7 @@ public class EarningController {
         try {
             List<Earning> earnings = new ArrayList<>();
             for (Earning earning : earningService.findAllEarnings()) {
-                if(earning.getAccount().getUser().getId().equals(Integer.valueOf(jwtUtil.extractId(basicAuthString)))
+                if(earning.getAccount().getUser().getId().equals(Integer.valueOf(strings[1]))
                 && earning.getDeleted()==null){
                     earnings.add(earning);
                 }
@@ -52,11 +52,11 @@ public class EarningController {
     public ResponseEntity<?> addEarning(@RequestBody EarningRequestDTO earningRequestDTO,@RequestHeader("Authorization") String basicAuthString) {
         try {
 
-            if (accountService.getAccountById(earningRequestDTO.getAccountId()) == null || categoryService.findById(earningRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(basicAuthString)))== null) {
+            if (accountService.getAccountById(earningRequestDTO.getAccountId()) == null || categoryService.findById(earningRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(strings[1])))== null) {
                 return ResponseBuilder.notFound("Account or category not found");
             }else {
                 Earning earning = new Earning();
-                earning.setCategory(categoryService.findById(earningRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(basicAuthString))));
+                earning.setCategory(categoryService.findById(earningRequestDTO.getCategoryId(),Integer.valueOf(strings[1])));
                 earning.setAccount(accountService.getAccountById(earningRequestDTO.getAccountId()));
                 earning.setAmount(earningRequestDTO.getAmount());
                 earning.setEarningName(earningRequestDTO.getEarningName());
@@ -75,7 +75,7 @@ public class EarningController {
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateEarning(@PathVariable Integer id,@RequestBody Map<String, Object> update,@RequestHeader("Authorization") String basicAuthString) {
         try {
-            return ResponseBuilder.success(earningService.updateEarning(id,update,Integer.valueOf(jwtUtil.extractId(basicAuthString))));
+            return ResponseBuilder.success(earningService.updateEarning(id,update,Integer.valueOf(strings[1])));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
         }
@@ -88,7 +88,7 @@ public class EarningController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString) {
         try{
-            if (earningService.findById(id).get().getAccount().getUser().getId().equals(Integer.valueOf(jwtUtil.extractId(basicAuthString)))){
+            if (earningService.findById(id).get().getAccount().getUser().getId().equals(Integer.valueOf(strings[1]))){
                 throw new EntityNotFoundException("User not found");
             }
             return ResponseBuilder.success(earningService.findById(id));

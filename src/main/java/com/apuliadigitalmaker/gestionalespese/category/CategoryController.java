@@ -29,7 +29,7 @@ public class CategoryController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllCategories(@RequestHeader("Authorization") String basicAuthString) {
         try {
-            List<Category> categories = categoryService.findAllCategories(Integer.valueOf(jwtUtil.extractId(basicAuthString)));
+            List<Category> categories = categoryService.findAllCategories(Integer.valueOf(strings[1]));
 
             if (categories.isEmpty()) {
                 return ResponseBuilder.notFound("Categories not found");
@@ -47,7 +47,7 @@ public class CategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString) {
         try{
-            Category category = categoryService.findById(id,Integer.valueOf(jwtUtil.extractId(basicAuthString)));
+            Category category = categoryService.findById(id,Integer.valueOf(strings[1]));
             if (category!=null) {
                 return ResponseBuilder.success(category);
             }else{
@@ -64,7 +64,7 @@ public class CategoryController {
         try {
             return ResponseBuilder.success(
                     categoryService.findById(category.getId(),
-                            Integer.valueOf(jwtUtil.extractId(basicAuthString))));
+                            Integer.valueOf(strings[1])));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseBuilder.error();
@@ -74,7 +74,7 @@ public class CategoryController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteCategoryById(@RequestHeader("Authorization") String basicAuthString) {
         try{
-            categoryService.deleteCategory(Integer.valueOf(jwtUtil.extractId(basicAuthString)));
+            categoryService.deleteCategory(Integer.valueOf(strings[1]));
             return ResponseBuilder.deleted("Category deleted successfully");
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
@@ -91,7 +91,7 @@ public class CategoryController {
             return ResponseBuilder.badRequest("Required at least 3 characters");
         }
 
-        List<Category> categories =categoryService.searchCategory(query,Integer.valueOf(jwtUtil.extractId(basicAuthString)));
+        List<Category> categories =categoryService.searchCategory(query,Integer.valueOf(strings[1]));
         if (categories.isEmpty()) {
             return ResponseBuilder.notFound("Search has no results");
         }
@@ -102,7 +102,7 @@ public class CategoryController {
     @GetMapping("/search/expenseorearning/{id}")
     public ResponseEntity<?> searchExpenseOrEarningByCategory(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString){
         try{
-            return  ResponseBuilder.success(categoryService.searchExpenseOrEarningByCategory(id,Integer.valueOf(jwtUtil.extractId(basicAuthString))));
+            return  ResponseBuilder.success(categoryService.searchExpenseOrEarningByCategory(id,Integer.valueOf(strings[1])));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
         }catch (Exception e){
@@ -113,8 +113,9 @@ public class CategoryController {
 
     @PatchMapping("/update")
     public ResponseEntity<?> updateCategory(@RequestHeader("Authorization") String basicAuthString,@RequestBody Map<String, Object> update) {
+        String[] strings = jwtUtil.extractId(basicAuthString).split("::");
         try {
-            return ResponseBuilder.success(categoryService.updateCategory(Integer.valueOf(jwtUtil.extractId(basicAuthString)),update));
+            return ResponseBuilder.success(categoryService.updateCategory(Integer.valueOf(strings[1]),update));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
         }
