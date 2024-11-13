@@ -31,7 +31,7 @@ public class AccountController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @GetMapping("/all")
+    @GetMapping("/allwithoutauth")
     public ResponseEntity<?> getAllAccounts() {
         try{
             List<Account> accounts = accountService.findAllAccounts();

@@ -27,9 +27,9 @@ public class CategoryController {
     private JwtUtil jwtUtil;
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllCategories() {
+    public ResponseEntity<?> getAllCategories(@RequestHeader("Authorization") String basicAuthString) {
         try {
-            List<Category> categories = categoryService.findAllCategories();
+            List<Category> categories = categoryService.findAllCategories(Integer.valueOf(jwtUtil.extractId(basicAuthString)));
 
             if (categories.isEmpty()) {
                 return ResponseBuilder.notFound("Categories not found");
@@ -45,10 +45,10 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable Integer id) {
+    public ResponseEntity<?> getCategoryById(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString) {
         try{
-            Optional<Category> category = categoryRepository.findById(id);
-            if (category.isPresent()) {
+            Category category = categoryService.findById(id,Integer.valueOf(jwtUtil.extractId(basicAuthString)));
+            if (category!=null) {
                 return ResponseBuilder.success(category);
             }else{
                 throw new EntityNotFoundException("Category with id " + id + " not found");
@@ -62,10 +62,9 @@ public class CategoryController {
     @PostMapping("/add")
     public ResponseEntity<?> addCategory(@RequestBody Category category,@RequestHeader("Authorization") String basicAuthString){
         try {
-            categoryService.findById(category.getId()).getUser().setId(Integer.valueOf(jwtUtil.extractId(basicAuthString)));
-
-            Category newCategory = categoryService.saveCategory(category);
-            return ResponseBuilder.success(newCategory);
+            return ResponseBuilder.success(
+                    categoryService.findById(category.getId(),
+                            Integer.valueOf(jwtUtil.extractId(basicAuthString))));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseBuilder.error();

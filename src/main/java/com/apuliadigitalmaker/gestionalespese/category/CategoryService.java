@@ -26,18 +26,18 @@ public class CategoryService {
     private UserRepository userRepository;
 
 
-    public List<Category> findAllCategories() {
+    public List<Category> findAllCategories(Integer userId) {
         List<Category> categories = new ArrayList<>();
         for (Category category : categoryRepository.findAll()) {
-            if(category.getDeleted()==null){
+            if(category.getDeleted()==null && userId.equals(category.getUser().getId())) {
                 categories.add(category);
             }
         }
         return categories;
     }
 
-    public Category findById(Integer id) {
-        if (categoryRepository.findById(id).get().getDeleted()!=null) {
+    public Category findById(Integer id,Integer userId) {
+        if (categoryRepository.findById(id).get().getDeleted()!=null && userId.equals(categoryRepository.findById(id).get().getUser().getId()) ) {
             throw new EntityNotFoundException(notFoundMessage);
         }
         return categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(notFoundMessage));
