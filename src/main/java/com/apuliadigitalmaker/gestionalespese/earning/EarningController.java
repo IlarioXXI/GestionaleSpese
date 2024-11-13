@@ -2,6 +2,7 @@ package com.apuliadigitalmaker.gestionalespese.earning;
 
 import com.apuliadigitalmaker.gestionalespese.account.AccountService;
 import com.apuliadigitalmaker.gestionalespese.category.CategoryService;
+import com.apuliadigitalmaker.gestionalespese.common.JwtUtil;
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
 import com.apuliadigitalmaker.gestionalespese.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,6 +23,8 @@ public class EarningController {
     private UserService userService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllEarning() {
@@ -39,14 +42,14 @@ public class EarningController {
         }
     }
     @PostMapping("/add")
-    public ResponseEntity<?> addEarning(@RequestBody EarningRequestDTO earningRequestDTO) {
+    public ResponseEntity<?> addEarning(@RequestBody EarningRequestDTO earningRequestDTO,@RequestHeader("Authorization") String basicAuthString) {
         try {
 
-            if (accountService.getAccountById(earningRequestDTO.getAccountId()) == null || categoryService.findById(earningRequestDTO.getCategoryId())== null) {
+            if (accountService.getAccountById(earningRequestDTO.getAccountId()) == null || categoryService.findById(earningRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(basicAuthString)))== null) {
                 return ResponseBuilder.notFound("Account or category not found");
             }else {
                 Earning earning = new Earning();
-                earning.setCategory(categoryService.findById(earningRequestDTO.getCategoryId()));
+                earning.setCategory(categoryService.findById(earningRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(basicAuthString))));
                 earning.setAccount(accountService.getAccountById(earningRequestDTO.getAccountId()));
                 earning.setAmount(earningRequestDTO.getAmount());
                 earning.setEarningName(earningRequestDTO.getEarningName());

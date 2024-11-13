@@ -2,6 +2,7 @@ package com.apuliadigitalmaker.gestionalespese.expense;
 
 import com.apuliadigitalmaker.gestionalespese.account.AccountService;
 import com.apuliadigitalmaker.gestionalespese.category.CategoryService;
+import com.apuliadigitalmaker.gestionalespese.common.JwtUtil;
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
 import com.apuliadigitalmaker.gestionalespese.earning.Earning;
 import com.apuliadigitalmaker.gestionalespese.earning.EarningRequestDTO;
@@ -23,6 +24,8 @@ public class ExpenseController {
     private AccountService accountService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllExpenses() {
@@ -41,14 +44,14 @@ public class ExpenseController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO) {
+    public ResponseEntity<?> addExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO,@RequestHeader("Authorization") String basicAuthString) {
         try {
 
-            if (accountService.getAccountById(expenseRequestDTO.getAccountId()) == null || categoryService.findById(expenseRequestDTO.getCategoryId())== null) {
+            if (accountService.getAccountById(expenseRequestDTO.getAccountId()) == null || categoryService.findById(expenseRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(basicAuthString)))== null) {
                 return ResponseBuilder.notFound("Account or category not found");
             }else {
                 Expense expense = new Expense();
-                expense.setCategory(categoryService.findById(expenseRequestDTO.getCategoryId()));
+                expense.setCategory(categoryService.findById(expenseRequestDTO.getCategoryId(),Integer.valueOf(jwtUtil.extractId(basicAuthString))));
                 expense.setAccount(accountService.getAccountById(expenseRequestDTO.getAccountId()));
                 expense.setAmount(expenseRequestDTO.getAmount());
                 expense.setExpenseName(expenseRequestDTO.getExpenseName());

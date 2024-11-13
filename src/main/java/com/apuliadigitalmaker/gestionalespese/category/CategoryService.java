@@ -57,13 +57,19 @@ public class CategoryService {
         category.softDelete();
         return categoryRepository.save(category);
     }
-    public List<Category> searchCategory(String query) {
+    public List<Category> searchCategory(String query,Integer userId) {
+        List<Category> categories = new ArrayList<>();
+        for (Category category : categoryRepository.findAll()) {
+            if (category.getUser().getId().equals(userId)) {
+                categories.add(category);
+            }
+        }
         return categoryRepository.findByCategoryNameStartingWithIgnoreCaseAndDeletedIsNull(query);
     }
 
-    public List<?> searchExpenseOrEarningByCategory(Integer id) {
+    public List<?> searchExpenseOrEarningByCategory(Integer id,Integer userId) {
         Category category = categoryRepository.findById(id).orElseThrow(()-> new EntityNotFoundException(notFoundMessage));
-        if(category.getExpenseEarning()==1){
+        if(category.getExpenseEarning()==1 && category.getUser().getId().equals(userId)) {
             return categoryRepository.findEarningsByCategoryType();
         }else {
             return categoryRepository.findExpensesByCategoryType();

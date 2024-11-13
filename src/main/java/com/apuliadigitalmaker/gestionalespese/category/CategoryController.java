@@ -71,10 +71,10 @@ public class CategoryController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteCategoryById(@RequestHeader("Authorization") String basicAuthString) {
         try{
-            categoryService.deleteCategory(id);
+            categoryService.deleteCategory(Integer.valueOf(jwtUtil.extractId(basicAuthString)));
             return ResponseBuilder.deleted("Category deleted successfully");
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
@@ -86,12 +86,12 @@ public class CategoryController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchCategory(@RequestParam String query){
+    public ResponseEntity<?> searchCategory(@RequestParam String query,@RequestHeader("Authorization") String basicAuthString){
         if (query.length() < 3) {
             return ResponseBuilder.badRequest("Required at least 3 characters");
         }
 
-        List<Category> categories =categoryService.searchCategory(query);
+        List<Category> categories =categoryService.searchCategory(query,Integer.valueOf(jwtUtil.extractId(basicAuthString)));
         if (categories.isEmpty()) {
             return ResponseBuilder.notFound("Search has no results");
         }
@@ -100,9 +100,9 @@ public class CategoryController {
     }
 
     @GetMapping("/search/expenseorearning/{id}")
-    public ResponseEntity<?> searchExpenseOrEarningByCategory(@PathVariable Integer id){
+    public ResponseEntity<?> searchExpenseOrEarningByCategory(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString){
         try{
-            return  ResponseBuilder.success(categoryService.searchExpenseOrEarningByCategory(id));
+            return  ResponseBuilder.success(categoryService.searchExpenseOrEarningByCategory(id,Integer.valueOf(jwtUtil.extractId(basicAuthString))));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
         }catch (Exception e){
@@ -111,10 +111,10 @@ public class CategoryController {
         }
     }
 
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Integer id,@RequestBody Map<String, Object> update) {
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateCategory(@RequestHeader("Authorization") String basicAuthString,@RequestBody Map<String, Object> update) {
         try {
-            return ResponseBuilder.success(categoryService.updateCategory(id,update));
+            return ResponseBuilder.success(categoryService.updateCategory(Integer.valueOf(jwtUtil.extractId(basicAuthString)),update));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
         }
