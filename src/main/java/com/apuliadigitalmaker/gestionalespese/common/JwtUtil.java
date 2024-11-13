@@ -14,10 +14,11 @@ public class JwtUtil {
     private final String secretKey = "keb5nOfeC9PlMXJIez0MghFB5zdCdskJzqNwcBukOejNiUImPOZCuPz9JJO8HhePHI6nNUDcxbhxBFLxWwpTgUR0D8a5nNVHd1TOBDXvlQX4gbzMWXz4VUagkoVYRoON3QojvlJB8wTRQsHVlJg24LWSlb2nntYROwcYHlroEDEPYvLF8XxTb8TkbaAvjnqzkmdI0iXcd1hFxRwUGGmTYDZmi8MbF7KIaH9KCYWSzmj6OwHw9bVjqSg1gxAfApOk";
     private final SecretKey key = Jwts.SIG.HS256.key().build();
 
-    public String generateToken(String id) {
+    public String generateToken(String username,Integer userId) {
         long expirationTime = 3600000;
         return Jwts.builder()
-                .subject(id.toString())
+                .subject(username)
+                .setAudience(userId.toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -30,7 +31,7 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .getSubject();
+                .getAudience().toString();
     }
 
     public boolean isTokenValid(String token, String userId) {

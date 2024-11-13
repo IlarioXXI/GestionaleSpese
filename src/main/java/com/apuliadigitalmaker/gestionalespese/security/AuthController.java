@@ -51,7 +51,7 @@ public class AuthController {
             if (authentication.isAuthenticated()) {
                 Logger.info(String.format("%s successfully authenticated.", username));
                  Integer userId = userRepository.findByUsername(username).get().getId();
-                return ResponseBuilder.authSuccess(jwtUtil.generateToken(userId.toString()));
+                return ResponseBuilder.authSuccess(jwtUtil.generateToken(username,userId));
             } else {
                 throw new BadCredentialsException("Invalid credentials");
             }
