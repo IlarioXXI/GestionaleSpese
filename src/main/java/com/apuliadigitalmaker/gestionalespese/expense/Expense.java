@@ -25,6 +25,9 @@ public class Expense {
     @JoinColumn(name = "category_id",nullable = false)
     private Category category;
 
+    @Column(name= "expense_name", nullable = false)
+    private String expenseName;
+
     @Column(name= "amount", nullable = false)
     private BigDecimal amount;
 

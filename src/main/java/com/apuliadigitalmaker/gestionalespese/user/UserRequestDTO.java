@@ -22,11 +22,11 @@ public class UserRequestDTO {
         this.password = password;
     }
 
-    public Integer getEmployeeId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setEmployeeId(Integer employeeId) {
-        this.userId = employeeId;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }
