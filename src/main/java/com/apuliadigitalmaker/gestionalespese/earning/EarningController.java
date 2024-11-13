@@ -42,12 +42,12 @@ public class EarningController {
     public ResponseEntity<?> addEarning(@RequestBody EarningRequestDTO earningRequestDTO) {
         try {
 
-            if (accountService.findAccountById(earningRequestDTO.getAccountId()) == null || categoryService.findById(earningRequestDTO.getCategoryId())== null) {
+            if (accountService.getAccountById(earningRequestDTO.getAccountId()) == null || categoryService.findById(earningRequestDTO.getCategoryId())== null) {
                 return ResponseBuilder.notFound("Account or category not found");
             }else {
                 Earning earning = new Earning();
                 earning.setCategory(categoryService.findById(earningRequestDTO.getCategoryId()));
-                earning.setAccount(accountService.findAccountById(earningRequestDTO.getAccountId()));
+                earning.setAccount(accountService.getAccountById(earningRequestDTO.getAccountId()));
                 earning.setAmount(earningRequestDTO.getAmount());
                 earning.setEarningName(earningRequestDTO.getEarningName());
                 earning.setEarningDate(earningRequestDTO.getEarningDate());

@@ -4,6 +4,7 @@ import com.apuliadigitalmaker.gestionalespese.account.Account;
 import com.apuliadigitalmaker.gestionalespese.earning.Earning;
 import com.apuliadigitalmaker.gestionalespese.earning.EarningRepository;
 import com.apuliadigitalmaker.gestionalespese.expense.ExpenseRepository;
+import com.apuliadigitalmaker.gestionalespese.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
     public List<Category> findAllCategories() {

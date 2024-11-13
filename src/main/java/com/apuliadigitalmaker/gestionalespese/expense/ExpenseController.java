@@ -44,12 +44,12 @@ public class ExpenseController {
     public ResponseEntity<?> addExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO) {
         try {
 
-            if (accountService.findAccountById(expenseRequestDTO.getAccountId()) == null || categoryService.findById(expenseRequestDTO.getCategoryId())== null) {
+            if (accountService.getAccountById(expenseRequestDTO.getAccountId()) == null || categoryService.findById(expenseRequestDTO.getCategoryId())== null) {
                 return ResponseBuilder.notFound("Account or category not found");
             }else {
                 Expense expense = new Expense();
                 expense.setCategory(categoryService.findById(expenseRequestDTO.getCategoryId()));
-                expense.setAccount(accountService.findAccountById(expenseRequestDTO.getAccountId()));
+                expense.setAccount(accountService.getAccountById(expenseRequestDTO.getAccountId()));
                 expense.setAmount(expenseRequestDTO.getAmount());
                 expense.setExpenseName(expenseRequestDTO.getExpenseName());
                 expense.setExpanseDate(expenseRequestDTO.getExpanseDate());

@@ -11,7 +11,5 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account getAccountsById(Integer id);
     Optional<Account> findAccountById(Integer id);
     List<Account> findByAccountNameStartingWithIgnoreCaseAndDeletedIsNull(String query);
-    List<Account> findAccountsByDeletedIsNull();
-    List<Account> findAccountsByDeletedIsNullAndUserNotNullAndUser_Id(Integer id);
-
+    List<Account> findAccountsByDeletedIsNullAndUserNotNullAndUser_Id(Integer userId);
 }

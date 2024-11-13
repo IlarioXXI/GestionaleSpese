@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,7 +36,16 @@ public class AccountService {
         return accountRepository.getAccountsById(id);
     }
 
-    public Account findAccountById(Integer id){return accountRepository.getAccountsById(id);}
+    public List<Account> getAllAccountsById(Integer id){
+        List<Account> accounts = new ArrayList<>();
+        for (Account account : findAllAccounts()) {
+            if (account.getId().equals(id) && account.getDeleted()==null) {
+                accounts.add(account);
+            }
+        }
+        return accounts;
+    }
+
     @Transactional
     public Account updateAccount(Integer id, Map<String, Object> update){
         Optional<Account> optionalAccount = accountRepository.findAccountById(id);
@@ -68,8 +78,14 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    public List<Account> searchAccount(String query) {
-        return accountRepository.findByAccountNameStartingWithIgnoreCaseAndDeletedIsNull(query);
+    public List<Account> searchAccount(String query,Integer userId) {
+        List<Account> accounts = new ArrayList<>();
+        for (Account account : accountRepository.findByAccountNameStartingWithIgnoreCaseAndDeletedIsNull(query)) {
+            if(account.getUser().getId().equals(userId)){
+                accounts.add(account);
+            }
+        }
+        return accounts;
     }
 
 

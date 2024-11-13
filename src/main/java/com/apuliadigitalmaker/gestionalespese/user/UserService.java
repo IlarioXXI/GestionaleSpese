@@ -58,7 +58,7 @@ public class UserService {
                     user.setUsername((String) value);
                     break;
                 case "password" :
-                    user.setUsername((String) value);
+                    user.setPassword((String) value);
                     break;
                 case "email" :
                     user.setEmail((String) value);

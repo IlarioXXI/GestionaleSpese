@@ -1,6 +1,7 @@
 package com.apuliadigitalmaker.gestionalespese.category;
 
 import com.apuliadigitalmaker.gestionalespese.account.Account;
+import com.apuliadigitalmaker.gestionalespese.common.JwtUtil;
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
 import com.apuliadigitalmaker.gestionalespese.expense.Expense;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,6 +23,8 @@ public class CategoryController {
     private CategoryService categoryService;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllCategories() {
@@ -57,8 +60,10 @@ public class CategoryController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addCategory(@RequestBody Category category){
+    public ResponseEntity<?> addCategory(@RequestBody Category category,@RequestHeader("Authorization") String basicAuthString){
         try {
+            categoryService.findById(category.getId()).getUser().setId(Integer.valueOf(jwtUtil.extractId(basicAuthString)));
+
             Category newCategory = categoryService.saveCategory(category);
             return ResponseBuilder.success(newCategory);
         } catch (Exception e) {

@@ -124,7 +124,7 @@ public final class ResponseBuilder {
 
         response.put("success", true);
         response.put("token", jwt);
-        response.put("username", jwtUtil.extractUsername(jwt));
+        response.put("username", jwtUtil.extractId(jwt));
 
         headers.setContentType(MediaType.APPLICATION_JSON);
 

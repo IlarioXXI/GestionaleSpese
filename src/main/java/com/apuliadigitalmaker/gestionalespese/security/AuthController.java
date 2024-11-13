@@ -4,6 +4,7 @@ import com.apuliadigitalmaker.gestionalespese.common.AuthUtil;
 import com.apuliadigitalmaker.gestionalespese.common.JwtUtil;
 import com.apuliadigitalmaker.gestionalespese.common.Logger;
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
+import com.apuliadigitalmaker.gestionalespese.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +25,8 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping
     public ResponseEntity<?> authenticate(@RequestHeader("Authorization") String basicAuthString) {
@@ -47,7 +50,8 @@ public class AuthController {
 
             if (authentication.isAuthenticated()) {
                 Logger.info(String.format("%s successfully authenticated.", username));
-                return ResponseBuilder.authSuccess(jwtUtil.generateToken(username));
+                 Integer userId = userRepository.findByUsername(username).get().getId();
+                return ResponseBuilder.authSuccess(jwtUtil.generateToken(userId.toString()));
             } else {
                 throw new BadCredentialsException("Invalid credentials");
             }

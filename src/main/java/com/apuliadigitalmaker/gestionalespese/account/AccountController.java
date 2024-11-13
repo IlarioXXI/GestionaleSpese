@@ -1,5 +1,6 @@
 package com.apuliadigitalmaker.gestionalespese.account;
 
+import com.apuliadigitalmaker.gestionalespese.common.JwtUtil;
 import com.apuliadigitalmaker.gestionalespese.common.ResponseBuilder;
 import com.apuliadigitalmaker.gestionalespese.user.UserRepository;
 import com.apuliadigitalmaker.gestionalespese.user.UserService;
@@ -27,6 +28,8 @@ public class AccountController {
     private UserRepository userRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllAccounts() {
@@ -44,11 +47,11 @@ public class AccountController {
         }
     }
 
-    @GetMapping("/all/{id}")
-    public ResponseEntity<?> getAllAccountsById(@PathVariable Integer id) {
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllAccountsById(@RequestHeader("Authorization") String basicAuthString) {
         try{
             List<Account> accounts = new ArrayList<>();
-            accounts.addAll(accountRepository.findAccountsByDeletedIsNull());
+            accounts.addAll(accountService.getAllAccountsById(Integer.valueOf(jwtUtil.extractId(basicAuthString))));
             if (accounts.isEmpty()) {
                 return ResponseBuilder.notFound("No account is present, please create one first.");
             }else {
@@ -61,11 +64,11 @@ public class AccountController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addAccount(@RequestBody AccountRequestDto accountRequestDto) {
+    public ResponseEntity<?> addAccount(@RequestBody AccountRequestDto accountRequestDto,@RequestHeader("Authorization") String basicAuthString) {
         try {
             Account account = new Account();
-            if (userService.findUserById(accountRequestDto.getUserId()) != null) {
-                account.setUser(userService.findUserById(accountRequestDto.getUserId()));
+            if (userService.findUserById(Integer.valueOf(jwtUtil.extractId(basicAuthString))) != null) {
+                account.setUser(userService.findUserById(Integer.valueOf(jwtUtil.extractId(basicAuthString))));
             } else throw new EntityNotFoundException("User not found");
 
             account.setAccountName(accountRequestDto.getAccountName());
@@ -81,9 +84,9 @@ public class AccountController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAccountById(@PathVariable Integer id,@RequestBody AccountRequestDto accountRequestDto) {
+    public ResponseEntity<?> getAccountById(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString) {
         try{
-            accountRepository.findAccountsByDeletedIsNullAndUserNotNullAndUser_Id(accountRequestDto.getUserId());
+            accountRepository.findAccountsByDeletedIsNullAndUserNotNullAndUser_Id(Integer.valueOf(jwtUtil.extractId(basicAuthString)));
             if (accountService.getAccountById(id)==null){
                 return ResponseBuilder.notFound("Account non found");
             }
@@ -94,10 +97,10 @@ public class AccountController {
         }
     }
 
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable Integer id,@RequestBody Map<String, Object> update){
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateAccount(@RequestHeader("Authorization") String basicAuthString,@RequestBody Map<String, Object> update){
         try{
-            return ResponseBuilder.success(accountService.updateAccount(id,update));
+            return ResponseBuilder.success(accountService.updateAccount(Integer.valueOf(jwtUtil.extractId(basicAuthString)),update));
         }
         catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
@@ -108,10 +111,10 @@ public class AccountController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteAccount(@PathVariable Integer id){
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteAccount(@RequestHeader("Authorization") String basicAuthString){
         try{
-            accountService.deleteAccount(id);
+            accountService.deleteAccount(Integer.valueOf(jwtUtil.extractId(basicAuthString)));
             return ResponseBuilder.deleted("Account deleted successfully");
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
@@ -123,12 +126,12 @@ public class AccountController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchAccount(@RequestParam String query){
+    public ResponseEntity<?> searchAccount(@RequestParam String query,@RequestHeader("Authorization") String basicAuthString){
         if (query.length() < 3) {
             return ResponseBuilder.badRequest("Required at least 3 characters");
         }
 
-        List<Account> accounts =accountService.searchAccount(query);
+        List<Account> accounts =accountService.searchAccount(query,Integer.valueOf(jwtUtil.extractId(basicAuthString)));
         if (accounts.isEmpty()) {
             return ResponseBuilder.notFound("Search has no results");
         }
