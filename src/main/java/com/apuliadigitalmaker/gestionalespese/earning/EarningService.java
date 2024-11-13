@@ -53,10 +53,13 @@ public class EarningService {
     }
 
     @Transactional
-    public Earning updateEarning(Integer id, Map<String, Object> update) {
+    public Earning updateEarning(Integer id, Map<String, Object> update,Integer userId) {
+        if (!earningRepository.findById(id).get().getAccount().getUser().getId().equals(userId)){
+            throw new EntityNotFoundException("User not found");
+        }
         Optional<Earning> optionalEarning = earningRepository.findById(id);
         if (optionalEarning.isPresent()){
-            throw new EntityNotFoundException("Expense with id " + id + " not found");
+            throw new EntityNotFoundException("Earning with id " + id + " not found");
         }
         Earning earning = optionalEarning.get();
         update.forEach((key, value) -> {

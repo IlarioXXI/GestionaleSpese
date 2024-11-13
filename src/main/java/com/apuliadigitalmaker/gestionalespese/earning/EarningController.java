@@ -9,6 +9,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,11 +29,16 @@ public class EarningController {
     private JwtUtil jwtUtil;
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllEarning() {
+    public ResponseEntity<?> getAllEarning(@RequestHeader("Authorization") String basicAuthString) {
         try {
-            List<Earning> earnings = earningService.findAllEarnings();
-
-            if (earnings.isEmpty()) {
+            List<Earning> earnings = new ArrayList<>();
+            for (Earning earning : earningService.findAllEarnings()) {
+                if(earning.getAccount().getUser().getId().equals(Integer.valueOf(jwtUtil.extractId(basicAuthString)))
+                && earning.getDeleted()==null){
+                    earnings.add(earning);
+                }
+            }
+            if (earnings.isEmpty() ) {
                 return ResponseBuilder.notFound("Earning not found");
             } else {
                 return ResponseBuilder.success(earnings);
@@ -66,9 +73,9 @@ public class EarningController {
     }
 
     @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updateEarning(@PathVariable Integer id,@RequestBody Map<String, Object> update) {
+    public ResponseEntity<?> updateEarning(@PathVariable Integer id,@RequestBody Map<String, Object> update,@RequestHeader("Authorization") String basicAuthString) {
         try {
-            return ResponseBuilder.success(earningService.updateEarning(id,update));
+            return ResponseBuilder.success(earningService.updateEarning(id,update,Integer.valueOf(jwtUtil.extractId(basicAuthString))));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
         }
@@ -79,8 +86,11 @@ public class EarningController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Integer id) {
+    public ResponseEntity<?> findById(@PathVariable Integer id,@RequestHeader("Authorization") String basicAuthString) {
         try{
+            if (earningService.findById(id).get().getAccount().getUser().getId().equals(Integer.valueOf(jwtUtil.extractId(basicAuthString)))){
+                throw new EntityNotFoundException("User not found");
+            }
             return ResponseBuilder.success(earningService.findById(id));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());

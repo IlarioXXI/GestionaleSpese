@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,10 +29,15 @@ public class ExpenseController {
     private JwtUtil jwtUtil;
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllExpenses() {
+    public ResponseEntity<?> getAllExpenses(@RequestHeader("Authorization") String basicAuthString) {
         try {
-            List<Expense> expenses = expenseService.findAllExpenses();
+            List<Expense> expenses = new ArrayList<>();
 
+            for (Expense expense : expenseService.findAllExpenses()){
+                if (expense.getDeleted()!=null && expense.getAccount().getUser().getId().equals(Integer.valueOf(jwtUtil.extractId(basicAuthString)))){
+                    expenses.add(expense);
+                }
+            }
             if (expenses.isEmpty()) {
                 return ResponseBuilder.notFound("Expense not found");
             } else {
@@ -68,9 +74,9 @@ public class ExpenseController {
     }
 
     @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updateExpense(@PathVariable Integer id,@RequestBody Map<String, Object> update) {
+    public ResponseEntity<?> updateExpense(@PathVariable Integer id,@RequestBody Map<String, Object> update,@RequestHeader("Authorization") String basicAuthString) {
         try {
-            return ResponseBuilder.success(expenseService.updateExpense(id,update));
+            return ResponseBuilder.success(expenseService.updateExpense(id,update,Integer.valueOf(jwtUtil.extractId(basicAuthString))));
         }catch (EntityNotFoundException e){
             return ResponseBuilder.notFound(e.getMessage());
         }

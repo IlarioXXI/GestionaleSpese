@@ -52,8 +52,11 @@ public class ExpenseService {
     }
 
     @Transactional
-    public Expense updateExpense(Integer id, Map<String, Object> update) {
+    public Expense updateExpense(Integer id, Map<String, Object> update,Integer userId) {
         Optional<Expense> optionalExpense = expenseRepository.findById(id);
+        if (!expenseRepository.findById(id).get().getAccount().getUser().getId().equals(userId)){
+            throw new EntityNotFoundException("User not found");
+        }
         if (optionalExpense.isPresent()){
             throw new EntityNotFoundException("Expense with id " + id + " not found");
         }
